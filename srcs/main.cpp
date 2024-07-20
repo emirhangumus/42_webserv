@@ -1,5 +1,5 @@
 #include <iostream>
-#include "Server.hpp"
+#include "Config.hpp"
 
 int main(int ac, char **av)
 {
@@ -11,7 +11,7 @@ int main(int ac, char **av)
 
 	std::string config_file = av[1];
 
-	Server server;
+	Config server;
 
 	bool okay = server.parseConfig(config_file);
 
@@ -20,9 +20,9 @@ int main(int ac, char **av)
 
 	std::cout << "Host: " << server.getHost() << std::endl;
 	std::cout << "Port: " << server.getPort() << std::endl;
-	std::cout << "ServerNames: " << std::endl;
-	for (size_t i = 0; i < server.getServerNames().size(); i++)
-		std::cout << "  " << server.getServerNames()[i] << std::endl;
+	std::cout << "ConfigNames: " << std::endl;
+	for (size_t i = 0; i < server.getConfigNames().size(); i++)
+		std::cout << "  " << server.getConfigNames()[i] << std::endl;
 	std::cout << "Root: " << server.getRoot() << std::endl;
 	std::cout << "Index: " << server.getIndex() << std::endl;
 	std::cout << "TryFiles: " << std::endl;

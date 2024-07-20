@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Server.hpp                                         :+:      :+:    :+:   */
+/*   Config.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: egumus <egumus@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/19 22:42:34 by egumus            #+#    #+#             */
-/*   Updated: 2024/07/20 02:43:29 by egumus           ###   ########.fr       */
+/*   Updated: 2024/07/20 13:04:25 by egumus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@
 #define SSERVER_CONFIG_KEY__AUTOINDEX "autoindex"
 #define SSERVER_CONFIG_KEY__LIMIT_EXCEPT "limit_except"
 
-enum ServerConfigKey
+enum ConfigConfigKey
 {
 	SERVER_CONFIG_KEY__LISTEN = 0,
 	SERVER_CONFIG_KEY__SERVER_NAME = 1,
@@ -46,7 +46,7 @@ enum ServerConfigKey
 	SERVER_CONFIG_KEY__INVALID = -1
 };
 
-class Server {
+class Config {
 	private:
 		std::string 				_host;
 		int							_port;
@@ -57,21 +57,21 @@ class Server {
 		std::string 				_client_max_body_size;
 		std::vector<std::string>	_allow_methods;
 		
-		ServerConfigKey	isValidConfigKey(std::string key);
+		ConfigConfigKey	isValidConfigKey(std::string key);
 
 	public:
-		Server();
-		~Server();
-		Server(const Server &copy);
-		Server &operator=(const Server &copy);
+		Config();
+		~Config();
+		Config(const Config &copy);
+		Config &operator=(const Config &copy);
 		
 		bool parseConfig(std::string file);
 		void parseBaseBlock(std::string line, int &depth);
-		void parseServerBlock(std::string line, int &depth);
+		void parseConfigBlock(std::string line, int &depth);
 		
 		std::string getHost() const { return _host; }
 		int getPort() const { return _port; }
-		std::vector<std::string> getServerNames() const { return _server_names; }
+		std::vector<std::string> getConfigNames() const { return _server_names; }
 		std::string getRoot() const { return _root; }
 		std::string getIndex() const { return _index; }
 		std::vector<std::string> getTryFiles() const { return _try_files; }

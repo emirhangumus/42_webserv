@@ -1,32 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Server.cpp                                         :+:      :+:    :+:   */
+/*   Config.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: egumus <egumus@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/19 22:44:12 by egumus            #+#    #+#             */
-/*   Updated: 2024/07/20 02:44:11 by egumus           ###   ########.fr       */
+/*   Updated: 2024/07/20 12:59:34 by egumus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Server.hpp"
+#include "Config.hpp"
 #include "Utils.hpp"
 #include <string>
 #include <iostream>
 #include <fstream>
 #include <vector>
 
-Server::Server() {}
+Config::Config() {}
 
-Server::~Server() {}
+Config::~Config() {}
 
-Server::Server(const Server &copy)
+Config::Config(const Config &copy)
 {
 	*this = copy;
 }
 
-Server &Server::operator=(const Server &copy)
+Config &Config::operator=(const Config &copy)
 {
 	if (this == &copy)
 		return *this;
@@ -41,7 +41,7 @@ Server &Server::operator=(const Server &copy)
 	return *this;
 }
 
-void Server::parseBaseBlock(std::string line, int &depth)
+void Config::parseBaseBlock(std::string line, int &depth)
 {
 	// If the line is empty, skip it.
 	if (line.empty())
@@ -68,15 +68,16 @@ void Server::parseBaseBlock(std::string line, int &depth)
 	depth++;
 }
 
-void Server::parseServerBlock(std::string line, int &depth)
+void Config::parseConfigBlock(std::string line, int &depth)
 {
-	(void)depth;
 	// If the line is empty, skip it.
 	if (line.empty())
 		return;
 
+	static std::string location;
+
 	std::vector<std::string> tokens = split(line, " ");
-	ServerConfigKey key;
+	ConfigConfigKey key;
 
 	// size_t i = 0;
 	key = isValidConfigKey(tokens[0]);
@@ -86,6 +87,7 @@ void Server::parseServerBlock(std::string line, int &depth)
 	*/
 	if (key == SERVER_CONFIG_KEY__INVALID && tokens[0] == "}")
 	{
+		location = "";
 		depth--;
 		return;
 	}
@@ -111,7 +113,7 @@ void Server::parseServerBlock(std::string line, int &depth)
 		case SERVER_CONFIG_KEY__LISTEN:
 			// Parse the listen directive.
 			listen_tokens = split(tokens[1], ":");
-			if (listen_tokens.size() != 2)
+			if (listen_tokens.size() != 2 || tokens.size() != 2)
 				throw std::runtime_error("Invalid listen directive");
 			_host = listen_tokens[0];
 			_port = std::stoi(listen_tokens[1]);
@@ -134,7 +136,10 @@ void Server::parseServerBlock(std::string line, int &depth)
 
 			// If the location directive does not end with a bracket, increase the depth.
 			if (tokens[tokens.size() - 1] == "{")
+			{
+				location = tokens[1];
 				depth++;
+			}
 			
 			break;
 		case SERVER_CONFIG_KEY__ROOT:
@@ -184,7 +189,7 @@ void Server::parseServerBlock(std::string line, int &depth)
 	}
 }
 
-ServerConfigKey	Server::isValidConfigKey(std::string key)
+ConfigConfigKey	Config::isValidConfigKey(std::string key)
 {
 	if (key == SSERVER_CONFIG_KEY__LISTEN)
 		return SERVER_CONFIG_KEY__LISTEN;
@@ -211,7 +216,7 @@ ServerConfigKey	Server::isValidConfigKey(std::string key)
 	return SERVER_CONFIG_KEY__INVALID;
 }
 
-bool Server::parseConfig(std::string file_path)
+bool Config::parseConfig(std::string file_path)
 {
 	std::fstream file;
 
@@ -248,7 +253,7 @@ bool Server::parseConfig(std::string file_path)
 						parseBaseBlock(line, depth);
 						break;
 					default:
-						parseServerBlock(line, depth);
+						parseConfigBlock(line, depth);
 						break;
 				}
 			}
