@@ -1,9 +1,6 @@
 #include "Utils.hpp"
 #include <algorithm>
 #include <cctype>
-#include <functional>
-#include <iostream>
-#include <sstream>
 #include <vector>
 
 // Functor to check if a character is not a whitespace

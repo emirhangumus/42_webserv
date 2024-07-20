@@ -1,5 +1,5 @@
 #include <iostream>
-#include "Config.hpp"
+#include "ConfigManager.hpp"
 
 int main(int ac, char **av)
 {
@@ -11,25 +11,25 @@ int main(int ac, char **av)
 
 	std::string config_file = av[1];
 
-	Config server;
+	ConfigManager configManager;
 
-	bool okay = server.parseConfig(config_file);
+	bool okay = configManager.parseConfigFile(config_file);
 
 	if (!okay)
 		return 1;
 
-	std::cout << "Host: " << server.getHost() << std::endl;
-	std::cout << "Port: " << server.getPort() << std::endl;
-	std::cout << "ConfigNames: " << std::endl;
-	for (size_t i = 0; i < server.getConfigNames().size(); i++)
-		std::cout << "  " << server.getConfigNames()[i] << std::endl;
-	std::cout << "Root: " << server.getRoot() << std::endl;
-	std::cout << "Index: " << server.getIndex() << std::endl;
-	std::cout << "TryFiles: " << std::endl;
-	for (size_t i = 0; i < server.getTryFiles().size(); i++)
-		std::cout << "  " << server.getTryFiles()[i] << std::endl;
-	std::cout << "ClientMaxBodySize: " << server.getClientMaxBodySize() << std::endl;
-	std::cout << "AllowMethods: " << std::endl;
-	for (size_t i = 0; i < server.getAllowMethods().size(); i++)
-		std::cout << "  " << server.getAllowMethods()[i] << std::endl;
+	// std::cout << "Host: " << configManager.getHost() << std::endl;
+	// std::cout << "Port: " << configManager.getPort() << std::endl;
+	// std::cout << "ConfigNames: " << std::endl;
+	// for (size_t i = 0; i < configManager.getConfigNames().size(); i++)
+	// 	std::cout << "  " << configManager.getConfigNames()[i] << std::endl;
+	// std::cout << "Root: " << configManager.getRoot() << std::endl;
+	// std::cout << "Index: " << configManager.getIndex() << std::endl;
+	// std::cout << "TryFiles: " << std::endl;
+	// for (size_t i = 0; i < configManager.getTryFiles().size(); i++)
+	// 	std::cout << "  " << configManager.getTryFiles()[i] << std::endl;
+	// std::cout << "ClientMaxBodySize: " << configManager.getClientMaxBodySize() << std::endl;
+	// std::cout << "AllowMethods: " << std::endl;
+	// for (size_t i = 0; i < configManager.getAllowMethods().size(); i++)
+	// 	std::cout << "  " << configManager.getAllowMethods()[i] << std::endl;
 }

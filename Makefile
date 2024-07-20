@@ -1,4 +1,4 @@
-SRCS = srcs/main.cpp srcs/config/Config.cpp srcs/utils/Utils.cpp
+SRCS = srcs/main.cpp srcs/config/ConfigManager.cpp srcs/config/Config.cpp srcs/config/ServerParser.cpp srcs/utils/Utils.cpp
 OBJ_DIR = obj
 OBJS = $(SRCS:%.cpp=$(OBJ_DIR)/%.o)
 
