@@ -76,26 +76,26 @@ bool ConfigManager::parseConfigFile(const std::string &filename)
 					}
 					else
 					{
-                        if (!isInLocationBlock && tokens[0] == SSERVER_CONFIG_KEY__LOCATION)
-                        {
-                            if (tokens.size() != 3)
-                                throw std::runtime_error("Invalid location block [R4]");
+						if (!isInLocationBlock && tokens[0] == SSERVER_CONFIG_KEY__LOCATION)
+						{
+							if (tokens.size() != 3)
+								throw std::runtime_error("Invalid location block [R4]");
 
-                            if (tokens.size() == 3 && tokens[2].find("{") == std::string::npos)
-                                throw std::runtime_error("Invalid location block [R5]");
+							if (tokens.size() == 3 && tokens[2].find("{") == std::string::npos)
+								throw std::runtime_error("Invalid location block [R5]");
 
-                            isInLocationBlock = true;
-                        }
+							isInLocationBlock = true;
+						}
 
-                        if (isInLocationBlock && tokens[0] == "}" && tokens.size() == 1)
-                        {
-                            isInLocationBlock = false;
-                            break ;
-                        }
+						if (isInLocationBlock && tokens[0] == "}" && tokens.size() == 1)
+						{
+							isInLocationBlock = false;
+							break ;
+						}
 
 						if (!isInLocationBlock && tokens[0] == "}" && tokens.size() == 1)
 						{
-    					    isServerBlock = false;
+							isServerBlock = false;
 						}
 
 						if (isServerBlock)
