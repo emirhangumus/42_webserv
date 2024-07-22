@@ -6,7 +6,7 @@
 /*   By: egumus <egumus@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/20 12:58:05 by egumus            #+#    #+#             */
-/*   Updated: 2024/07/20 13:03:19 by egumus           ###   ########.fr       */
+/*   Updated: 2024/07/22 03:28:18 by egumus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,22 @@
 # include <string>
 # include <fstream>
 # include "Config.hpp"
+# include "ConfigManager.hpp"
 
 class Cluster
 {
 	private:
-		std::map<std::string, Config>	_servers;
+		ConfigManager	*_configManager;
+		std::string		_config_file;
+	
+	public:
+		Cluster();
+		Cluster(std::string config_file);
+		~Cluster();
+
+		bool	initCluster();
+		bool	runCluster();
+		void	test();
 };
 
 #endif

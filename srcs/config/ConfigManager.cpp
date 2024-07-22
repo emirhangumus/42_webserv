@@ -6,7 +6,7 @@
 /*   By: egumus <egumus@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/20 16:03:49 by egumus            #+#    #+#             */
-/*   Updated: 2024/07/22 03:16:53 by egumus           ###   ########.fr       */
+/*   Updated: 2024/07/22 03:41:01 by egumus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,18 +113,12 @@ bool ConfigManager::parseConfigFile(const std::string &filename)
 					start++;
 				}
 
-				// std::cout << std::endl;
-				// std::cout << std::endl;
-				// std::cout << std::endl;
-				// std::cout << std::endl;
-				// std::cout << std::endl;
-				// for (size_t i = 0; i < serverBlock.size(); i++)
-				// 	std::cout << serverBlock[i] << std::endl;
-
 				config = sp.parseServer(serverBlock);
 
-				if (config != NULL)
-					_servers[config->getHost() + ":" + std::to_string(config->getPort())] = Config(*config);
+				if (config == NULL)
+					throw std::runtime_error("Failed to parse the server block");
+
+				_servers[config->getHost() + ":" + std::to_string(config->getPort())] = Config(*config);
 				
 				delete config;
 

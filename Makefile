@@ -1,4 +1,4 @@
-SRCS = srcs/main.cpp srcs/config/ConfigManager.cpp srcs/config/Config.cpp srcs/config/ServerParser.cpp srcs/utils/Utils.cpp
+SRCS = srcs/main.cpp srcs/server/Cluster.cpp srcs/config/ConfigManager.cpp srcs/config/Config.cpp srcs/config/ServerParser.cpp srcs/utils/Utils.cpp
 OBJ_DIR = obj
 OBJS = $(SRCS:%.cpp=$(OBJ_DIR)/%.o)
 
@@ -6,7 +6,7 @@ NAME = webserv
 
 CC = c++
 CFLAGS = -Wall -Wextra -Werror -std=c++98 -g
-INCLUDES = -Isrcs -Isrcs/config -Isrcs/utils
+INCLUDES = -Isrcs -Isrcs/config -Isrcs/utils -Isrcs/server
 
 all: $(NAME)
 

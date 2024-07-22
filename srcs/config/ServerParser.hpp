@@ -6,7 +6,7 @@
 /*   By: egumus <egumus@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/19 22:42:34 by egumus            #+#    #+#             */
-/*   Updated: 2024/07/22 03:07:52 by egumus           ###   ########.fr       */
+/*   Updated: 2024/07/22 08:55:15 by egumus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,8 @@ class ServerParser {
 		std::vector<std::string>			_allow_methods;
 		std::map<std::string, t_location>	_locations;
 
-		ConfigConfigKey	isValidConfigKey(std::string key);
+		ConfigConfigKey	isValidServerBlockKey(std::string key);
+		ConfigConfigKey	isValidLocationBlockKey(std::string key);
 		void			parseLine(std::string line);
 	public:
 		ServerParser();

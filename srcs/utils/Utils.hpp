@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
 // Trim from the start (left)
 std::string& ltrim(std::string& s);
@@ -20,12 +21,14 @@ bool ends_with(const std::string& str, const std::string& suffix);
 std::string extract_host(std::string host);
 
 typedef struct s_location {
-	std::string 				location;
-	std::string 				root;
-	std::string 				index;
-	std::vector<std::string> 	try_files;
-	std::string 				client_max_body_size;
-	std::vector<std::string> 	allow_methods;
+	std::string 						_location;
+	std::string 						_root;
+	std::string 						_index;
+	std::vector<std::string> 			_try_files;
+	std::string 						_client_max_body_size;
+	std::map<std::string, std::string> 	_return;
+	std::string 						_autoindex;
+	std::vector<std::string> 			_limit_except;
 }				t_location;
 
 #endif // UTILS_HPP
