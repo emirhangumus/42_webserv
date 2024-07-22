@@ -6,7 +6,7 @@
 /*   By: egumus <egumus@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/19 22:44:12 by egumus            #+#    #+#             */
-/*   Updated: 2024/07/22 09:03:41 by egumus           ###   ########.fr       */
+/*   Updated: 2024/07/22 20:14:39 by egumus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,9 +166,7 @@ void	ServerParser::parseLine(std::string line)
 
 		if (key == SERVER_CONFIG_KEY__INVALID && tokens[0] == "}")
 		{
-			std::cout << "new_loc._location: " << loc._location << std::endl;
 			_locations.insert(std::pair<std::string, t_location>(loc._location, loc));
-			std::cout << "new_loc._location: " << loc._location << std::endl;
 
 			loc._location = "";
 			loc._root = "";
