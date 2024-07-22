@@ -6,30 +6,35 @@
 /*   By: egumus <egumus@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/19 22:42:34 by egumus            #+#    #+#             */
-/*   Updated: 2024/07/20 16:28:14 by egumus           ###   ########.fr       */
+/*   Updated: 2024/07/22 03:06:04 by egumus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SERVER_HPP
-#define SERVER_HPP
+#ifndef CONFIG_HPP
+#define CONFIG_HPP
 
-#include "ServerParser.hpp"
+#include "../utils/Utils.hpp"
 #include <string>
 #include <vector>
+#include <map>
 
-class Config : public ServerParser {
+class ServerParser;
+
+class Config {
 	private:
-		std::string 				_host;
-		int							_port;
-		std::vector<std::string>	_server_names;
-		std::string 				_root;
-		std::string 				_index;
-		std::vector<std::string>	_try_files;
-		std::string 				_client_max_body_size;
-		std::vector<std::string>	_allow_methods;
+		std::string 						_host;
+		int									_port;
+		std::vector<std::string>			_server_names;
+		std::string 						_root;
+		std::string 						_index;
+		std::vector<std::string>			_try_files;
+		std::string 						_client_max_body_size;
+		std::vector<std::string>			_allow_methods;
+		std::map<std::string, t_location> 	_locations;
 
 	public:
 		Config();
+		Config(ServerParser &server);
 		~Config();
 		Config(const Config &copy);
 		Config &operator=(const Config &copy);
@@ -46,6 +51,8 @@ class Config : public ServerParser {
 		std::vector<std::string> getTryFiles() const { return _try_files; }
 		std::string getClientMaxBodySize() const { return _client_max_body_size; }
 		std::vector<std::string> getAllowMethods() const { return _allow_methods; }
+		std::map<std::string, t_location> getLocations() const { return _locations; }
+		t_location getLocation(std::string location) { return _locations[location]; }
 };
 
 #endif

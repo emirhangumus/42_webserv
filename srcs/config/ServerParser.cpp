@@ -6,14 +6,17 @@
 /*   By: egumus <egumus@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/19 22:44:12 by egumus            #+#    #+#             */
-/*   Updated: 2024/07/20 16:27:31 by egumus           ###   ########.fr       */
+/*   Updated: 2024/07/22 03:12:28 by egumus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ServerParser.hpp"
+#include "Config.hpp"
 #include "../utils/Utils.hpp"
 #include <string>
 #include <vector>
+#include <map>
+#include <iostream>
 
 ServerParser::ServerParser() {}
 
@@ -39,11 +42,11 @@ ServerParser &ServerParser::operator=(const ServerParser &copy)
 	return *this;
 }
 
-void ServerParser::parseServer(std::string line)
+void	ServerParser::parseLine(std::string line)
 {
 	// If the line is empty, skip it.
 	if (line.empty())
-		return;
+		return ;
 
 	static std::string location;
 
@@ -56,7 +59,7 @@ void ServerParser::parseServer(std::string line)
 	/**
 	 * If the key is invalid, throw an exception.
 	*/
-	if (key == SERVER_CONFIG_KEY__INVALID)
+	if (key == SERVER_CONFIG_KEY__INVALID && location.empty())
 		throw std::runtime_error("Invalid server config key " + tokens[0]);
 
 	/**
@@ -76,7 +79,7 @@ void ServerParser::parseServer(std::string line)
 			listen_tokens = split(tokens[1], ":");
 			if (listen_tokens.size() != 2 || tokens.size() != 2)
 				throw std::runtime_error("Invalid listen directive");
-			_host = listen_tokens[0];
+			_host = extract_host(listen_tokens[0]);
 			_port = std::stoi(listen_tokens[1]);
 			break;
 		case SERVER_CONFIG_KEY__SERVER_NAME:
@@ -136,18 +139,31 @@ void ServerParser::parseServer(std::string line)
 			_client_max_body_size = tokens[1];
 
 			break;
-		case SERVER_CONFIG_KEY__ALLOW_METHODS:
-			// Parse the allow_methods directive.
-			if (tokens.size() < 2)
-				throw std::runtime_error("Invalid allow_methods directive");
-
-			for (size_t i = 1; i < tokens.size(); i++)
-				_allow_methods.push_back(tokens[i]);
-
-			break;
 		default:
 			break;
 	}
+}
+
+Config *ServerParser::parseServer(std::vector<std::string> serverBlockLines)
+{
+	size_t i = 0;
+
+	try {
+		while (i < serverBlockLines.size())
+		{
+			parseLine(serverBlockLines[i]);
+			i++;
+		}
+	}
+	catch (const std::exception &e)
+	{
+		std::cerr << e.what() << std::endl;
+		return NULL;
+	}
+
+	Config *config = new Config(*this);
+
+	return config;
 }
 
 ConfigConfigKey	ServerParser::isValidConfigKey(std::string key)
@@ -166,13 +182,11 @@ ConfigConfigKey	ServerParser::isValidConfigKey(std::string key)
 		return SERVER_CONFIG_KEY__TRY_FILES;
 	if (key == SSERVER_CONFIG_KEY__CLIENT_MAX_BODY_SIZE)
 		return SERVER_CONFIG_KEY__CLIENT_MAX_BODY_SIZE;
-	if (key == SSERVER_CONFIG_KEY__ALLOW_METHODS)
-		return SERVER_CONFIG_KEY__ALLOW_METHODS;
+	if (key == SSERVER_CONFIG_KEY__LIMIT_EXCEPT)
+		return SERVER_CONFIG_KEY__LIMIT_EXCEPT;
 	if (key == SSERVER_CONFIG_KEY__RETURN)
 		return SERVER_CONFIG_KEY__RETURN;
 	if (key == SSERVER_CONFIG_KEY__AUTOINDEX)
 		return SERVER_CONFIG_KEY__AUTOINDEX;
-	if (key == SSERVER_CONFIG_KEY__LIMIT_EXCEPT)
-		return SERVER_CONFIG_KEY__LIMIT_EXCEPT;
 	return SERVER_CONFIG_KEY__INVALID;
 }

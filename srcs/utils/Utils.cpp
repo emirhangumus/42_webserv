@@ -47,3 +47,10 @@ std::vector<std::string> split(std::string s, std::string delimiter) {
 bool ends_with(const std::string& str, const std::string& suffix) {
 	return str.size() >= suffix.size() && 0 == str.compare(str.size() - suffix.size(), suffix.size(), suffix);
 }
+
+std::string extract_host(std::string host) {
+	// if the host is "localhost" it have to be "127.0.0.1"
+	if (host == "localhost")
+		host = "127.0.0.1";
+	return host;
+}
