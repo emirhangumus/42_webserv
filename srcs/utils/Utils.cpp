@@ -54,3 +54,19 @@ std::string extract_host(std::string host) {
 		host = "127.0.0.1";
 	return host;
 }
+
+int		is_path_is_file(const std::string& path)
+{
+	struct stat s;
+	if (stat(path.c_str(), &s) == 0 )
+	{
+		if (s.st_mode & S_IFDIR)
+			return 0;
+		else if (s.st_mode & S_IFREG)
+			return 1;
+		else
+			return 0;
+	}
+	else
+		return 0;
+}

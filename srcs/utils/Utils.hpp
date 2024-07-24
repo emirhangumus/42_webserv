@@ -20,6 +20,8 @@ bool ends_with(const std::string& str, const std::string& suffix);
 
 std::string extract_host(std::string host);
 
+int is_path_is_file(const std::string& path);
+
 typedef struct s_location {
 	std::string 						_location;
 	std::string 						_root;

@@ -20,7 +20,8 @@ int main(int ac, char **av)
 
 	// cluster.runCluster();
 
-	cluster.test();
+	// cluster.test("127.0.0.1:8080");
+	cluster.runCluster();
 
 	// Config config;
 
