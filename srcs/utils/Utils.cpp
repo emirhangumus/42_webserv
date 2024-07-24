@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <cctype>
 #include <vector>
+#include <sys/stat.h>
 
 // Functor to check if a character is not a whitespace
 struct NotSpace {
