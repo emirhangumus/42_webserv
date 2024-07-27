@@ -16,6 +16,73 @@
 #include <fcntl.h>
 #include <sys/wait.h>
 
+
+static bool    exec_cgı(int new_socket, std::string path)
+{
+    int pipefd[2];
+    if (pipe(pipefd) == -1)
+    {
+        std::cerr << "Error: pipe() failed" << std::endl;
+        return false;
+    }
+    int pid = fork();
+    if (pid == -1)
+    {
+        std::cerr << "Error: fork() failed" << std::endl;
+        return false;
+    }
+    if (pid == 0) // Child process
+    {
+        close(pipefd[0]); // Close unused read end
+        dup2(pipefd[1], STDOUT_FILENO); // Redirect stdout to pipe
+        close(pipefd[1]);
+
+        char *args[] = { (char *)"garbage", (char *)path.c_str(), NULL };
+        if (path.find(".py") != std::string::npos)
+            execve("/usr/bin/python3", args, NULL);                            
+        else
+            execve("/usr/bin/php", args, NULL);
+        perror("execvp");
+        exit(EXIT_FAILURE);
+    }
+    else // Parent process
+    {
+        close(pipefd[1]); // Close unused write end
+
+        // Read the output from the PHP script
+        char buffer[4096];
+        std::string content;
+        int bytesRead;
+        while ((bytesRead = read(pipefd[0], buffer, sizeof(buffer))) > 0)
+            content.append(buffer, bytesRead);
+        close(pipefd[0]);
+
+        int status;
+        waitpid(pid, &status, 0);
+
+        if (WIFEXITED(status) && WEXITSTATUS(status) == 0)
+        {
+            // send the response
+            std::string response = "HTTP/1.1 200 OK\r\n";
+            response += "Content-Type: text/html\r\n";
+            response += "Content-Length: " + std::to_string(content.size()) + "\r\n";
+            response += "\r\n";
+            response += content;
+            send(new_socket, response.c_str(), response.size(), 0);
+        }
+        else
+        {
+            std::string response = "HTTP/1.1 500 Internal Server Error\r\n";
+            response += "Content-Type: text/html\r\n";
+            response += "Content-Length: 0\r\n";
+            response += "\r\n";
+            send(new_socket, response.c_str(), response.size(), 0);
+        }
+        close(new_socket);
+    }
+    return true;
+}
+
 Cluster::Cluster() {
     this->_config_file = "";
 }
@@ -166,9 +233,7 @@ bool Cluster::runCluster()
                         break;
                     }
                 }
-
                 Request req(buffer);
-
                 // check if the file exists
                 std::cout << "Host: " << host << std::endl;
                 std::map<std::string, Config> confs = this->_configManager->getServers();
@@ -190,75 +255,8 @@ bool Cluster::runCluster()
                     path += "index.html";
                 std::cout << "Path: " << path << std::endl;
 
-                if (path.find(".php") != std::string::npos)
-                {
-                    int pipefd[2];
-                    if (pipe(pipefd) == -1)
-                    {
-                        std::cerr << "Error: pipe() failed" << std::endl;
-                        return false;
-                    }
-
-                    int pid = fork();
-                    if (pid == -1)
-                    {
-                        std::cerr << "Error: fork() failed" << std::endl;
-                        return false;
-                    }
-
-                    if (pid == 0) // Child process
-                    {
-                        close(pipefd[0]); // Close unused read end
-                        dup2(pipefd[1], STDOUT_FILENO); // Redirect stdout to pipe
-                        close(pipefd[1]);
-
-                        char *args[] = { (char *)"php", (char *)path.c_str(), NULL };
-						execve("/usr/bin/php", args, NULL);
-
-                        // If execvp fails
-                        perror("execvp");
-                        exit(EXIT_FAILURE);
-                    }
-                    else // Parent process
-                    {
-                        close(pipefd[1]); // Close unused write end
-
-                        // Read the output from the PHP script
-                        char buffer[4096];
-                        std::string content;
-                        int bytesRead;
-                        while ((bytesRead = read(pipefd[0], buffer, sizeof(buffer))) > 0)
-                        {
-                            content.append(buffer, bytesRead);
-                        }
-                        close(pipefd[0]);
-
-                        int status;
-                        waitpid(pid, &status, 0);
-
-                        if (WIFEXITED(status) && WEXITSTATUS(status) == 0)
-                        {
-                            // send the response
-                            std::string response = "HTTP/1.1 200 OK\r\n";
-                            response += "Content-Type: text/html\r\n";
-                            response += "Content-Length: " + std::to_string(content.size()) + "\r\n";
-                            response += "\r\n";
-                            response += content;
-
-                            send(new_socket, response.c_str(), response.size(), 0);
-                        }
-                        else
-                        {
-                            std::string response = "HTTP/1.1 500 Internal Server Error\r\n";
-                            response += "Content-Type: text/html\r\n";
-                            response += "Content-Length: 0\r\n";
-                            response += "\r\n";
-                            send(new_socket, response.c_str(), response.size(), 0);
-                        }
-
-                        close(new_socket);
-                    }
-                }
+                if (path.find(".php") != std::string::npos || path.find(".py") != std::string::npos)
+                    exec_cgı(new_socket, path);
                 else
                 {
                     std::ifstream file(path);
