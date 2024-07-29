@@ -16,7 +16,6 @@
 #include <fcntl.h>
 #include <sys/wait.h>
 
-
 static bool    exec_cgı(int new_socket, std::string path)
 {
     int pipefd[2];
@@ -84,15 +83,23 @@ static bool    exec_cgı(int new_socket, std::string path)
 }
 
 Cluster::Cluster() {
+    this->_cookie = Cookie();
     this->_config_file = "";
 }
 
 Cluster::Cluster(std::string config_file) {
+    this->_cookie = Cookie();
     this->_config_file = config_file;
 }
 
 Cluster::~Cluster() {
     delete this->_configManager;
+}
+
+void    Cluster::parseCookie(std::string cookie)
+{
+    this->_cookie.setCookie(cookie);
+    this->_cookie.printCookies();
 }
 
 bool Cluster::initCluster()
@@ -204,6 +211,8 @@ bool Cluster::runCluster()
                 // parse the request
                 Request request(buffer);
                 std::string host = request.getHeaders()["Host"];
+                std::string cookie = request.getHeaders()["Cookie"];
+                this->parseCookie(cookie);
                 trim(host); // remove leading and trailing whitespaces
                 std::string uri = request.getUri();
                 std::string method = request.getMethod();
@@ -287,6 +296,7 @@ bool Cluster::runCluster()
             }
         }
     }
+
 
     return true;
 }

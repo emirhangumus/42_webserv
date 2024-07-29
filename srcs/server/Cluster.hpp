@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Cluster.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: egumus <egumus@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: burkaya <burkaya@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/20 12:58:05 by egumus            #+#    #+#             */
-/*   Updated: 2024/07/22 20:20:06 by egumus           ###   ########.fr       */
+/*   Updated: 2024/07/29 14:13:21 by burkaya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,14 @@
 # include <fstream>
 # include "Config.hpp"
 # include "ConfigManager.hpp"
+# include "Cookie.hpp"
 
 class Cluster
 {
 	private:
 		ConfigManager	*_configManager;
 		std::string		_config_file;
+		Cookie			_cookie;
 	
 	public:
 		Cluster();
@@ -34,6 +36,7 @@ class Cluster
 
 		bool	initCluster();
 		bool	runCluster();
+		void	parseCookie(std::string cookie);
 		void	test(std::string key);
 };
 
